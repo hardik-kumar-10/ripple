@@ -5,6 +5,13 @@ import { formOptions } from "@tanstack/react-form";
 
 import { useAppForm } from "@/hooks/use-app-form";
 
+const ttsFormSchema = z.object({
+    text: z.string().min(1, "Please enter some text"),
+    voiceId: z.string().min(1, "Please select a voice"),
+    temperature: z.number(),
+    topP: z.number(),
+    topK: z.number(),
+    repetitionPenalty: z.number(),
 export const ttsFormSchema = z.object({
     text: z.string().min(1, "Please enter some text"),
     voiceId: z.string().min(1, "Please select a voice"),
@@ -40,6 +47,15 @@ export function TextToSpeechForm({
         ...ttsFormOptions,
         defaultValues: defaultValues ?? defaultTTSValues,
         validators: {
+            onSubmit: ttsFormSchema,
+        },
+        onSubmit: async () => {
+            // Generation logic will be added later
+        },
+    });
+
+    return <form.AppForm>{children}</form.AppForm>;
+};
             onSubmit: ({ value }) => ttsFormSchema.parse(value),
         },
         onSubmit: async () => {
