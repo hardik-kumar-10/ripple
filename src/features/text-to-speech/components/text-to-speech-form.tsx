@@ -12,6 +12,13 @@ const ttsFormSchema = z.object({
     topP: z.number(),
     topK: z.number(),
     repetitionPenalty: z.number(),
+export const ttsFormSchema = z.object({
+    text: z.string().min(1, "Please enter some text"),
+    voiceId: z.string().min(1, "Please select a voice"),
+    temperature: z.Number(),
+    topP: z.Number(),
+    topK: z.Number(),
+    repetitionPenalty: z.Number(),
 });
 
 export type TTSFormValues = z.infer<typeof ttsFormSchema>;
@@ -49,3 +56,21 @@ export function TextToSpeechForm({
 
     return <form.AppForm>{children}</form.AppForm>;
 };
+            onSubmit: ({ value }) => ttsFormSchema.parse(value),
+        },
+        onSubmit: async () => {
+            // Generation logic later
+        },
+    });
+
+    return (
+        <form
+            onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit();
+            }}
+        >
+            {children}
+        </form>
+    );
+}
