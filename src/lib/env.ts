@@ -6,10 +6,13 @@ export const env = createEnv({
     DATABASE_URL: z.string().min(1),
     APP_URL: z.string().min(1),
     FIREBASE_PROJECT_ID: z.string().min(1),
-    FIREBASE_CLIENT_EMAIL: z.string().email(),
+    FIREBASE_CLIENT_EMAIL: z.string().min(1),
     FIREBASE_PRIVATE_KEY: z.string().min(1),
     FIREBASE_STORAGE_BUCKET: z.string().min(1),
+    CHATTERBOX_API_URL: z.string().url(),
+    CHATTERBOX_API_KEY: z.string().min(1),
   },
   experimental__runtimeEnv: {},
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
+
