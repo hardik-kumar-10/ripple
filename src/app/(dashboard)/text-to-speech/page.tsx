@@ -8,6 +8,7 @@ export const metadata: Metadata = { title: "Text to Speech" };
 export default async function TextToSpeechPage() {
     // Prefetch voices on the server to avoid fetch errors during SSR
     void prefetch(trpc.voices.getAll.queryOptions());
+    void prefetch(trpc.generations.getAll.queryOptions());
 
     return (
         <HydrateClient>
