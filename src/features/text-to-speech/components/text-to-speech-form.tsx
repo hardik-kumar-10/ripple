@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import { useTRPC } from "@/trpc/client";
 import { useAppForm } from "@/hooks/use-app-form";
+import { useCheckout } from "@/features/billing/hooks/use-checkout";
 
 const ttsFormSchema = z.object({
     text: z.string().min(1, "Please enter some text"),
@@ -16,13 +17,6 @@ const ttsFormSchema = z.object({
     topP: z.number(),
     topK: z.number(),
     repetitionPenalty: z.number(),
-export const ttsFormSchema = z.object({
-    text: z.string().min(1, "Please enter some text"),
-    voiceId: z.string().min(1, "Please select a voice"),
-    temperature: z.Number(),
-    topP: z.Number(),
-    topK: z.Number(),
-    repetitionPenalty: z.Number(),
 });
 
 export type TTSFormValues = z.infer<typeof ttsFormSchema>;
@@ -53,6 +47,8 @@ export function TextToSpeechForm({
         trpc.generations.create.mutationOptions({}),
     );
 
+    const { checkout } = useCheckout();
+
     const form = useAppForm({
         ...ttsFormOptions,
         defaultValues: defaultValues ?? defaultTTSValues,
@@ -76,28 +72,19 @@ export function TextToSpeechForm({
                 const message =
                     error instanceof Error ? error.message : "Failed to generate audio";
 
-                toast.error(message);
+                if (message === "SUBSCRIPTION_REQUIRED") {
+                    toast.error("Subscription required", {
+                        action: {
+                            label: "Subscribe",
+                            onClick: () => checkout(),
+                        },
+                    });
+                } else {
+                    toast.error(message);
+                }
             }
         },
     });
 
     return <form.AppForm>{children}</form.AppForm>;
 };
-            onSubmit: ({ value }) => ttsFormSchema.parse(value),
-        },
-        onSubmit: async () => {
-            // Generation logic later
-        },
-    });
-
-    return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                form.handleSubmit();
-            }}
-        >
-            {children}
-        </form>
-    );
-}
