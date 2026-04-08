@@ -10,7 +10,7 @@ import { useTRPC } from "@/trpc/client";
 import { useAppForm } from "@/hooks/use-app-form";
 import { useCheckout } from "@/features/billing/hooks/use-checkout";
 
-const ttsFormSchema = z.object({
+export const ttsFormSchema = z.object({
     text: z.string().min(1, "Please enter some text"),
     voiceId: z.string().min(1, "Please select a voice"),
     temperature: z.number(),
@@ -87,4 +87,4 @@ export function TextToSpeechForm({
     });
 
     return <form.AppForm>{children}</form.AppForm>;
-};
+}
