@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { polar } from "@/lib/polar";
+import { env } from "@/lib/env";
 import { TRPCError } from "@trpc/server";
-import { chatterbox } from "@/lib/chatterbox-client";
+import { chatterbox } from "@/lib/chatterbox_client";
 import { prisma } from "@/lib/db";
 import { uploadAudio } from "@/lib/r2";
 import { TEXT_MAX_LENGTH } from "@/features/text-to-speech/data/constants";
@@ -197,9 +198,11 @@ export const generationsRouter = createTRPCRouter({
                 .ingest({
                     events: [
                         {
-                            name: "tts_generation",
+                            name: env.POLAR_METER_TTS_GENERATION,
                             externalCustomerId: ctx.orgId,
-                            metadata: { characters: input.text.length },
+                            metadata: {
+                                [env.POLAR_METER_TTS_PROPERTY]: input.text.length,
+                            },
                             timestamp: new Date(),
                         },
                     ],
