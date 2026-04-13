@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { polar } from "@/lib/polar";
-import { env } from "@/lib/env";
 import { TRPCError } from "@trpc/server";
-import { chatterbox } from "@/lib/chatterbox_client";
+import { chatterbox } from "@/lib/chatterbox-client";
 import { prisma } from "@/lib/db";
 import { uploadAudio } from "@/lib/r2";
 import { TEXT_MAX_LENGTH } from "@/features/text-to-speech/data/constants";
@@ -70,6 +69,7 @@ export const generationsRouter = createTRPCRouter({
                 }
             } catch (err) {
                 if (err instanceof TRPCError) throw err;
+                // Customer doesn't exist in Polar yet -> no subscription
                 throw new TRPCError({
                     code: "FORBIDDEN",
                     message: "SUBSCRIPTION_REQUIRED",
@@ -81,7 +81,7 @@ export const generationsRouter = createTRPCRouter({
                     id: input.voiceId,
                     OR: [
                         { variant: "SYSTEM" },
-                        { variant: "CUSTOM", orgId: ctx.orgId },
+                        { variant: "CUSTOM", orgId: ctx.orgId, }
                     ],
                 },
                 select: {
@@ -117,6 +117,7 @@ export const generationsRouter = createTRPCRouter({
                 },
                 parseAs: "arrayBuffer",
             });
+
 
             if (error) {
                 throw new TRPCError({
@@ -166,6 +167,7 @@ export const generationsRouter = createTRPCRouter({
                         r2ObjectKey,
                     },
                 });
+
             } catch {
                 if (generationId) {
                     await prisma.generation
@@ -190,20 +192,21 @@ export const generationsRouter = createTRPCRouter({
                 });
             }
 
+            // Ingest usage event to Polar (fire-and-forget, don't block response)
             polar.events
                 .ingest({
                     events: [
                         {
-                            name: env.POLAR_METER_TTS_GENERATION,
+                            name: "tts_generation",
                             externalCustomerId: ctx.orgId,
-                            metadata: {
-                                [env.POLAR_METER_TTS_PROPERTY]: input.text.length,
-                            },
+                            metadata: { characters: input.text.length },
                             timestamp: new Date(),
                         },
                     ],
                 })
-                .catch(() => { });
+                .catch(() => {
+                    // Silently fail - don't break the user experience for metering errors
+                });
 
             return {
                 id: generationId,
