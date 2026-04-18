@@ -1,7 +1,5 @@
-
 import { useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useCheckout } from "@/features/billing/hooks/use-checkout";

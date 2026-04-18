@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 import { createEnv } from "@t3-oss/env-nextjs";
 
@@ -15,7 +16,7 @@ export const env = createEnv({
     FIREBASE_CLIENT_EMAIL: z.string().min(1),
     FIREBASE_PRIVATE_KEY: z.string().min(1),
     FIREBASE_STORAGE_BUCKET: z.string().min(1),
-    CHATTERBOX_API_URL: z.string().url(),
+    CHATTERBOX_API_URL: z.url(),
     CHATTERBOX_API_KEY: z.string().min(1),
   },
   experimental__runtimeEnv: {},

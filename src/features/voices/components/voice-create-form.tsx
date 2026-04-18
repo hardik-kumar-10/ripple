@@ -65,8 +65,8 @@ import {
 import { VoiceRecorder } from "./voice-recorder";
 
 const LANGUAGE_OPTIONS = locales.all
-    .filter((l) => l.tag && l.tag.includes("-") && l.name)
-    .map((l) => ({
+    .filter((l: any) => l.tag && l.tag.includes("-") && l.name)
+    .map((l: any) => ({
         value: l.tag,
         label: l.location ? `${l.name} (${l.location})` : l.name,
     }));
