@@ -8,20 +8,29 @@ export const billingRouter = createTRPCRouter({
         console.log("TOKEN:", process.env.POLAR_ACCESS_TOKEN?.slice(0, 10))
         console.log("SERVER:", process.env.POLAR_SERVER)
 
-        const result = await polar.checkouts.create({
-            products: [env.POLAR_PRODUCT_ID],
-            externalCustomerId: ctx.orgId,
-            successUrl: process.env.APP_URL,
-        });
+        try {
+            const result = await polar.checkouts.create({
+                products: [env.POLAR_PRODUCT_ID],
+                externalCustomerId: ctx.orgId,
+                successUrl: env.APP_URL,
+            });
 
-        if (!result.url) {
+            if (!result.url) {
+                console.error("Polar Checkout Creation Failed: No URL returned", result);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Failed to create checkout session",
+                });
+            }
+
+            return { checkoutUrl: result.url };
+        } catch (error) {
+            console.error("Polar Checkout Error:", error);
             throw new TRPCError({
                 code: "INTERNAL_SERVER_ERROR",
                 message: "Failed to create checkout session",
             });
         }
-
-        return { checkoutUrl: result.url };
     }),
 
     createPortalSession: orgProcedure.mutation(async ({ ctx }) => {
