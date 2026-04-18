@@ -144,7 +144,7 @@ const systemVoiceMetadata: Record<string, VoiceMetadata> = {
     },
     Marisol: {
         description: "Confident and polished with a persuasive, ad-ready delivery",
-        category: "ADVERTISING",
+        category: "ADVERTISE",
         language: "en-US",
     },
     Meera: {
