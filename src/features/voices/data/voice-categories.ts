@@ -11,6 +11,7 @@ export const VOICE_CATEGORY_LABELS: Record<VoiceCategory, string> = {
     MOTIVATION: "Motivation",
     PODCAST: "Podcast",
     ADVERTISE: "Advertise",
+    ADVERTISING: "Advertising",
     VOICEOVER: "Voiceover",
     CORPORATE: "Corporate",
 };
