@@ -7,6 +7,8 @@ export const billingRouter = createTRPCRouter({
     createCheckout: orgProcedure.mutation(async ({ ctx }) => {
         console.log("TOKEN:", process.env.POLAR_ACCESS_TOKEN?.slice(0, 10))
         console.log("SERVER:", process.env.POLAR_SERVER)
+        console.log("PRODUCT ID:", env.POLAR_PRODUCT_ID)
+        console.log("APP URL:", env.APP_URL)
 
         try {
             const result = await polar.checkouts.create({
